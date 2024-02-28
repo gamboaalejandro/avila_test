@@ -1,28 +1,36 @@
-import { Prop, Schema, SchemaFactory, } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
 
 @Schema()
 export class Product extends Document {
-  @Prop({ required: true })
-  nombre: string;
+  @Prop({ type: String, default: () => uuidv4(), unique: true })
+  _id: string;
 
   @Prop({ required: true })
-  descripcion: string;
+  name: string;
 
   @Prop({ required: true })
-  precio: number;
+  description: string;
+
+  @Prop({ required: true })
+  price: number;
 
   @Prop({ required: true })
   stock: number;
 
-  @Prop({ default: true })
-  disponibilidad: boolean;
+  @Prop({ required: true, default: true })
+  availability: boolean;
 
   @Prop({ default: Date.now })
-  fechaCreacion: Date;
+  created_at: Date;
 
   @Prop()
-  fechaActualizacion: Date;
+  updated_at: Date;
+
+  @Prop()
+  deleted_at: Date;
+
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
