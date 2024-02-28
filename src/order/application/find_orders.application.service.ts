@@ -1,4 +1,4 @@
-import { IApplicationService } from '../../common/application/application-service.interface';
+/*import { IApplicationService } from '../../common/application/application-service.interface';
 import { RepositoryInterface } from '../../common/application/repository/repository.interface';
 import { Result } from '../../common/infrastructure/results/result';
 
@@ -14,3 +14,4 @@ export class FindOrderApplicationService implements IApplicationService<MainCrit
     return this.findRepository.execute(data);
   }
 }
+*/
