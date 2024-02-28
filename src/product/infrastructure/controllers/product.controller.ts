@@ -16,6 +16,7 @@ import { DeleteProductApplicationService } from '../../application/delete_produc
 import { FindProductRepository } from '../repository/find_product.repository';
 import { MainCriteriaInterface } from '../../../users/domain/criterias/main_criteria.interface';
 import { ProductCriteria } from '../../domain/criterias/product_criteria';
+import { FindProductApplicationService } from '../../application/find_product.application.service';
 
 
 @ApiTags('products')
@@ -30,7 +31,7 @@ export class ProductController {
   private readonly createProductApplicationService:IApplicationService<CreateProductDto, void | void[]> = new CreateProductApplicationService(this.productRepository);
   private readonly updateProductApplicationService:IApplicationService<UpdateProductDto, void | void[]> = new UpdateProductApplicationService(this.updateProductRepository);
   private readonly deleteProductApplicationService:IApplicationService<String, void | void[]> = new DeleteProductApplicationService(this.deleteProductRepository);
-  private readonly findProductApplicationService:IApplicationService<MainCriteriaInterface, ProductEntity>= new FindProductRepository();
+  private readonly findProductApplicationService:IApplicationService<MainCriteriaInterface, ProductEntity> = new FindProductApplicationService(this.findProductRepository);
   constructor() {}
 
   @Get()

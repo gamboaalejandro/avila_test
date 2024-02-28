@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { UserSchema } from '../../users/infrastructure/collections/user.entity';
 import { ProductSchema } from '../../product/infrastructure/collections/product.schema';
 import { OrderSchema } from '../../order/infrastructure/collections/order.schema';
+import { ProductOrderSchema } from '../../order/infrastructure/collections/products_in_order.schema';
 
 class MongooseConnection {
   private static instance: mongoose.Connection;
@@ -15,7 +16,9 @@ class MongooseConnection {
       mongoose.model('User', UserSchema)
       mongoose.model('Product', ProductSchema)
       mongoose.model('Order', OrderSchema)
-      MongooseConnection.instance = mongoose.connection;
+      mongoose.model('ProductOrder', ProductOrderSchema)
+
+    MongooseConnection.instance = mongoose.connection;
       MongooseConnection.instance.on('error', console.error.bind(console, 'MongoDB connection error:'));
     }
 

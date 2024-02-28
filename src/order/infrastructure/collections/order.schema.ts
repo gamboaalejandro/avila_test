@@ -4,6 +4,7 @@ import { Document } from 'mongoose';
 import { User } from 'src/users/infrastructure/collections/user.entity';
 import { Product } from 'src/product/infrastructure/collections/product.schema';
 import { v4 as uuidv4 } from 'uuid';
+import { ProductOrder } from './products_in_order.schema';
 
 type OrderStatus = 'pending' | 'completed' | 'cancelled';
 
@@ -12,11 +13,11 @@ export class Order extends Document {
   @Prop({ type: String, default: () => uuidv4(), unique: true })
   _id: string;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
-  productos: Product[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ProductOrder' }] })
+  products: ProductOrder[];
 
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  usuario: User | string; // Ahora 'usuario' hace referencia directamente al esquema de 'User'
+  users: User | string; // Ahora 'usuario' hace referencia directamente al esquema de 'User'
 
   @Prop({ required: true })
   total: number;
@@ -26,13 +27,13 @@ export class Order extends Document {
     enum: ['pending', 'completed', 'cancelled'],
     default: 'pending',
   })
-  estado: OrderStatus;
+  status: OrderStatus;
 
   @Prop({ default: Date.now })
-  fechaCreacion: Date;
+  created_at: Date;
 
-  @Prop()
-  fechaActualizacion: Date;
+  @Prop({ default: Date.now })
+  updated_at: Date;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

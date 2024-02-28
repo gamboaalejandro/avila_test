@@ -8,6 +8,7 @@ import { Product, ProductSchema } from './product/infrastructure/collections/pro
 import { Order, OrderSchema } from './order/infrastructure/collections/order.schema';
 import { UserController } from './users/infrastructure/controllers/user.controller';
 import { ProductController } from './product/infrastructure/controllers/product.controller';
+import { OrdersController } from './order/infrastructure/controllers/order.controller';
 console.log('configMongo.mongoURI',configMongo.mongoURI)
 @Module({
   imports: [
@@ -19,7 +20,7 @@ console.log('configMongo.mongoURI',configMongo.mongoURI)
     
     ])
   ],
-  controllers: [AppController,UserController,ProductController],
+  controllers: [AppController,UserController,ProductController,OrdersController],
   providers: [AppService],
 })
 export class AppModule {}
