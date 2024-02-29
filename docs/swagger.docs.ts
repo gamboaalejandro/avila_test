@@ -5,7 +5,10 @@ export const swagger = (app) => {
     .setDescription('Api to managment users, products and orders')
     .setVersion('1.0.0')
     .addTag('auth')
-    .addBearerAuth()
+      .addBearerAuth(
+        { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+        'access-token', // Este es el nombre del securityScheme que se puede referenciar en los decoradores @ApiSecurity
+      )
     .build();
     const document = SwaggerModule.createDocument(app, options);
 

@@ -12,6 +12,7 @@ import { MyResponse } from '../../../common/infrastructure/results/response';
 import { BcryptService } from '../../../common/infrastructure/utilities/encription.bcrypt';
 import { UserCriteria } from '../../domain/criterias/user_criterias';
 import { JwtAuthGuard } from '../../../auth/jwt/jwt.auth.guard';
+import { AuthGuard } from '../../../auth/jwt/auth.guard';
 
 @Controller()
 export class UserController {
@@ -32,7 +33,7 @@ export class UserController {
       return MyResponse.fail(400, result.message, result.error);
     }
   }
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard)
   @ApiTags('Users')
   @Get('/users')
   async findUser( @Query() criterias:UserCriteria): Promise<MyResponse<UserEntity | UserEntity[] > | void> {

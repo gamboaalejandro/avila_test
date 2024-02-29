@@ -8,6 +8,9 @@ import { CreateOrderApplicationService } from '../../application/create_order.ap
 import { IApplicationService } from '../../../common/application/application-service.interface';
 import { MyResponse } from '../../../common/infrastructure/results/response';
 import { JwtAuthGuard } from '../../../auth/jwt/jwt.auth.guard';
+import { DeleteProductRepository } from '../../../product/infrastructure/repository/delete_product.repository';
+import { DeleteOrderApplicationService } from '../../application/delete_order.application.service';
+import { AuthGuard } from '../../../auth/jwt/auth.guard';
 
 
 @ApiTags('orders')
@@ -15,12 +18,16 @@ import { JwtAuthGuard } from '../../../auth/jwt/jwt.auth.guard';
 export class OrdersController {
   //Repository
   private readonly createOrderRepository:CreateOrderRepository = new CreateOrderRepository();
+  private readonly updateOrderRepository:CreateOrderRepository = new CreateOrderRepository();
+  private readonly deleteOrderRepository:DeleteProductRepository = new DeleteProductRepository();
+  private readonly findOrderRepository:CreateOrderRepository = new CreateOrderRepository();
 
   //Services
   private readonly  createOrderApplicationService:IApplicationService<CreateOrderDto, void> = new CreateOrderApplicationService(this.createOrderRepository)
+  private readonly  deleteOrderApplicationService:IApplicationService<String, void> = new DeleteOrderApplicationService(this.deleteOrderRepository)
   constructor() {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard)
   @Post('/create')
   @ApiOperation({ summary: 'Create a new order' })
   @ApiResponse({ status: 201, description: 'The order has been successfully created.', type: Order })
@@ -34,7 +41,7 @@ export class OrdersController {
     }
     //return this.ordersService.create(createOrderDto);
   }
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard)
 
   @Get('/orders')
   @ApiOperation({ summary: 'Get all orders' })
@@ -42,7 +49,7 @@ export class OrdersController {
   async findAll() {
     //return this.ordersService.findAll();
   }
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard)
 
   @Get('/order/:id')
   @ApiOperation({ summary: 'Get an order by id' })
@@ -51,7 +58,7 @@ export class OrdersController {
   async findOne(@Param('id') id: string) {
     //return this.ordersService.findOne(id);
   }
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard)
 
   @Put('/update/:id')
   @ApiOperation({ summary: 'Update an order' })
@@ -59,12 +66,18 @@ export class OrdersController {
   async update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
     //return this.ordersService.update(id, updateOrderDto);
   }
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard)
 
   @Delete('/delete/:id')
   @ApiOperation({ summary: 'Delete an order' })
   @ApiResponse({ status: 204, description: 'The order has been successfully deleted.' })
-  async remove(@Param('id') id: string): Promise<void> {
-    //return this.ordersService.remove(id);
+  async remove(@Param('id') id: string) {
+    const result = await this.deleteOrderApplicationService.execute(id);
+    if (result.IsSuccess) {
+      return MyResponse.success(result.Value);
+    }else
+    {
+      return MyResponse.fail(result.statusCode || 500, result.message, result.error);
+    }
   }
 }
