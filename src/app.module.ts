@@ -9,9 +9,12 @@ import { Order, OrderSchema } from './order/infrastructure/collections/order.sch
 import { UserController } from './users/infrastructure/controllers/user.controller';
 import { ProductController } from './product/infrastructure/controllers/product.controller';
 import { OrdersController } from './order/infrastructure/controllers/order.controller';
+import { AuthController } from './auth/controllers/auth.controller';
+import { AuthModule } from './auth/auth.module';
 console.log('configMongo.mongoURI',configMongo.mongoURI)
 @Module({
   imports: [
+    AuthModule,
     MongooseModule.forRoot(configMongo.mongoURI.trim()),
     MongooseModule.forFeature([
       { name: 'User', schema:UserSchema },
@@ -20,7 +23,7 @@ console.log('configMongo.mongoURI',configMongo.mongoURI)
     
     ])
   ],
-  controllers: [AppController,UserController,ProductController,OrdersController],
+  controllers: [AppController,UserController,ProductController,OrdersController, AuthController],
   providers: [AppService],
 })
 export class AppModule {}

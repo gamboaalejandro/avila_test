@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateRepository } from '../repository/create_repository';
 import { CreateUserDto } from '../../domain/dto/create_user_dto';
@@ -11,6 +11,7 @@ import { CreateUserApplicationService } from '../../application/create_user.appl
 import { MyResponse } from '../../../common/infrastructure/results/response';
 import { BcryptService } from '../../../common/infrastructure/utilities/encription.bcrypt';
 import { UserCriteria } from '../../domain/criterias/user_criterias';
+import { JwtAuthGuard } from '../../../auth/jwt/jwt.auth.guard';
 
 @Controller()
 export class UserController {
@@ -31,7 +32,7 @@ export class UserController {
       return MyResponse.fail(400, result.message, result.error);
     }
   }
-
+  @UseGuards(JwtAuthGuard)
   @ApiTags('Users')
   @Get('/users')
   async findUser( @Query() criterias:UserCriteria): Promise<MyResponse<UserEntity | UserEntity[] > | void> {

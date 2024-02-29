@@ -3,6 +3,7 @@ import { UserSchema } from '../../users/infrastructure/collections/user.entity';
 import { ProductSchema } from '../../product/infrastructure/collections/product.schema';
 import { OrderSchema } from '../../order/infrastructure/collections/order.schema';
 import { ProductOrderSchema } from '../../order/infrastructure/collections/products_in_order.schema';
+import { RoleSchema } from '../../auth/schemas/role.collection';
 
 class MongooseConnection {
   private static instance: mongoose.Connection;
@@ -17,6 +18,7 @@ class MongooseConnection {
       mongoose.model('Product', ProductSchema)
       mongoose.model('Order', OrderSchema)
       mongoose.model('ProductOrder', ProductOrderSchema)
+      mongoose.model('Role', RoleSchema)
 
     MongooseConnection.instance = mongoose.connection;
       MongooseConnection.instance.on('error', console.error.bind(console, 'MongoDB connection error:'));

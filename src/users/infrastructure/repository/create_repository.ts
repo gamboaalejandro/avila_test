@@ -13,7 +13,9 @@ export class CreateRepository implements RepositoryInterface<CreateUserDto, void
 
   async execute(data: CreateUserDto): Promise<Result<void>> {
     data.password = await this.hashingService.hashPassword(data.password);
-    const isExists = await this.checkIfUserExists(data.user);
+    if (!data.role) {
+      return Result.fail<void>(new BadRequestException('Role not found'));
+    }
     return !(await this.checkIfUserExists(data.user)) ? Result.success(await (await MongooseConnection.getInstance()).model('User').create(data))
       : Result.fail<void>(new BadRequestException('Username already exists'));
   }

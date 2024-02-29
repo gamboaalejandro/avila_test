@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Product } from '../collections/product.schema';
 import { CreateProductRepository } from '../repository/create_product.repository';
@@ -17,6 +17,7 @@ import { FindProductRepository } from '../repository/find_product.repository';
 import { MainCriteriaInterface } from '../../../users/domain/criterias/main_criteria.interface';
 import { ProductCriteria } from '../../domain/criterias/product_criteria';
 import { FindProductApplicationService } from '../../application/find_product.application.service';
+import { JwtAuthGuard } from '../../../auth/jwt/jwt.auth.guard';
 
 
 @ApiTags('products')
@@ -33,7 +34,7 @@ export class ProductController {
   private readonly deleteProductApplicationService:IApplicationService<String, void | void[]> = new DeleteProductApplicationService(this.deleteProductRepository);
   private readonly findProductApplicationService:IApplicationService<MainCriteriaInterface, ProductEntity> = new FindProductApplicationService(this.findProductRepository);
   constructor() {}
-
+  @UseGuards(JwtAuthGuard)
   @Get()
   @ApiOperation({ summary: 'Get all products' })
   @ApiResponse({ status: 200, description: 'Return all products.' })
@@ -47,7 +48,7 @@ export class ProductController {
     }
 
   }
-
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiOperation({ summary: 'Get a product by its id' })
   @ApiResponse({ status: 200, description: 'Return a single product.' })
@@ -55,6 +56,7 @@ export class ProductController {
   async findOne(@Param('id') id: string) {
     //return this.productService.findOne(id);
   }
+  @UseGuards(JwtAuthGuard)
 
   @Post('/create')
   @ApiOperation({ summary: 'Create a new product' })
@@ -69,6 +71,7 @@ export class ProductController {
     }
 
   }
+  @UseGuards(JwtAuthGuard)
 
   @Put(':id')
   @ApiOperation({ summary: 'Update a product' })
@@ -84,6 +87,7 @@ export class ProductController {
       return MyResponse.fail(result.statusCode || 500, result.message, result.error);
     }
   }
+  @UseGuards(JwtAuthGuard)
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a product' })
