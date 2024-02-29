@@ -16,7 +16,7 @@ export class FindProductRepository implements RepositoryInterface<MainCriteriaIn
 
   }
 
-  async execute(data: ProductCriteria): Promise<Result<ProductEntity | ProductEntity[] >> {
+  async execute(data: any): Promise<Result<ProductEntity | ProductEntity[] >> {
   //TODO: implement logic to find products avaliable with stock> 0 in the database
     let query = {availability: true};
     if(data._id){

@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { IsJSON, IsNumber, IsString } from 'class-validator';
+import { productOrderDto } from './create_order.dto';
 
 export class UpdateOrderDto {
   _id: string;
-  @IsString({ each: true })
-  @ApiProperty({ type: [String], example: ['5f9d4f2b4f3c4b2b4f3c4b2b'], description: 'The ids of the products' })
-  product: string[];
+  @IsJSON({ each: true })
+  @ApiProperty({ type: [productOrderDto ], example: [{ product : 'b8f4ae0b-fa0c-4173-b406-67f5107d004e', quantity: 1  }], description: 'The ids of the products' })
+  product: productOrderDto[];
   @IsNumber()
   @ApiProperty({ example: 2,description: 'The quantity of the product'})
   quantity: number;

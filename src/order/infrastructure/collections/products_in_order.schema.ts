@@ -8,8 +8,8 @@ export class ProductOrder extends Document {
   @Prop({ type: String, default: () => uuidv4(), unique: true })
   _id: string;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
-  products: Product[];
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Product' })
+  products: Product;
 
   @Prop({ required: true })
   quantity: number;
