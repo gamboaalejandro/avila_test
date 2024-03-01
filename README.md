@@ -5,11 +5,23 @@ Prueba tecnica Avila tek para el cargo de desarrollador backend
 
 ## Modelo entidad relacion de la base de datos
 
-![Organigrama.png](..%2F..%2F..%2F..%2FDownloads%2FOrganigrama.png)
+![Organigrama](https://github.com/gamboaalejandro/avila_test/assets/46832210/9996ff1b-bcab-4bba-a112-e5b9fe138a78)
 
-```bash
-$ npm install
-```
+## Arquitectura
+
+Se implemento una arquitectura hexagonal, de caracter escalable separando el dominio del problema, de los detalles de infraestructura, frameworks y librerias externas
+ * se implementaron los siguientes patrones de diseño:
+       - Singleton
+       - Repository
+       - Inyeccion de dependencias
+
+se utilizo la base de datos mongo db ya que atraves de los esquemas ofrecemos flexibilidad a los cambios y escalibilidad tanto vertical como horizontalmente ya que 
+si el sistema presenta un grande volumen de transacciones esto suele ser lo mas eficiente y las consultas suelen ser mucho mas sencillas ya que estan basadas en JSON
+
+se implementaron varios enviroments para garantizar la escalabilidad a traves de ambientes
+
+se utilizaron coontraros para garantizar extension de funcionalidad, respetando el principio SOLID correspondiente,
+
 
 ## Running the app
 
@@ -24,29 +36,3 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
