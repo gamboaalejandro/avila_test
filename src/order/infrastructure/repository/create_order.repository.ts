@@ -10,6 +10,7 @@ export class CreateOrderRepository implements RepositoryInterface<CreateOrderDto
   }
 
   async execute(order: CreateOrderDto): Promise<Result<void>> {
+    order.total = 0;
     const existingProduct = [];
     const productOrders = [];
     const user = await (await MongooseConnection.getInstance()).model('User').findOne({
@@ -18,6 +19,7 @@ export class CreateOrderRepository implements RepositoryInterface<CreateOrderDto
     if (user) {
       order.users = user;
       const product_ids = order.product.map(item => item.product);
+      let hola;
       const products = await (await MongooseConnection.getInstance()).model('Product').find({
         _id: { $in: product_ids },
       });
@@ -27,6 +29,7 @@ export class CreateOrderRepository implements RepositoryInterface<CreateOrderDto
           existingProduct.push(product.name.toString());
 
         }
+        hola = order.product.find((item: productOrderDto) => item.product === product._id).quantity;
         order.total = order.total + (product.price * order.product.find((item: productOrderDto) => item.product === product._id).quantity);
         productOrders.push({
           products: product,

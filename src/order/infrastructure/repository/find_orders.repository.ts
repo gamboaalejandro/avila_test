@@ -4,11 +4,11 @@ import { RepositoryInterface } from '../../../common/application/repository/repo
 
 import MongooseConnection from '../../../common/infrastructure/mongo_singleton';
 import { NotFoundException } from '@nestjs/common';
-import { ProductCriteria } from '../../../product/domain/criterias/product_criteria';
-import { ProductEntity } from '../../../product/domain/entities/product.entity';
+import { Order } from '../collections/order.schema';
+import { OrderCriteria } from '../../domain/criteria/order.criteria';
 
 
-export class FindProductRepository implements RepositoryInterface<MainCriteriaInterface, ProductEntity | ProductEntity[]> {
+export class FindOrderRepository implements RepositoryInterface<MainCriteriaInterface, Order | Order[]> {
   get name(): string {
     return this.name;
   }
@@ -16,27 +16,20 @@ export class FindProductRepository implements RepositoryInterface<MainCriteriaIn
 
   }
 
-  async execute(data: any): Promise<Result<ProductEntity | ProductEntity[] >> {
+  async execute(data: OrderCriteria): Promise<Result<any>> {
   //TODO: implement logic to find products avaliable with stock> 0 in the database
-    let query = {availability: true};
-    if(data._id){
-      query['_id'] = {_id: data._id}
+    const user = await (await MongooseConnection.getInstance()).model('User').findOne({_id:{ $regex: data.users, $options: 'i' }});
+    let query = {};
+    if(data.users){
+      query['users'] = {_id: data.users};
     }
-    if(data.name){
-      query['name'] = {name: data.name}
-    }
-    if(data.price){
-      query['price'] = {price: data.price}
-    }
-    if(data.stock){
-      query['stock'] = {stock:  {$gt: 0}}
-    }
-    const products = await (await MongooseConnection.getInstance()).model('Product').find(query);
+
+    const products = await (await MongooseConnection.getInstance()).model('Order').find({users:user._id}).populate('products')
     if (products) {
       return Result.success(products);
     }
     else
-      return Result.fail(new NotFoundException('Product not found'));
+      return Result.fail(new NotFoundException('User Orders not found'));
   }
 
 }

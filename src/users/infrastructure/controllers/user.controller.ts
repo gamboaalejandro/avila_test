@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateRepository } from '../repository/create_repository';
 import { CreateUserDto } from '../../domain/dto/create_user_dto';
 import { RepositoryInterface } from '../../../common/application/repository/repository.interface';
@@ -23,6 +23,7 @@ export class UserController {
 
   constructor() {}
   @ApiTags('Users')
+
   @Post('/users')
   async createUser(@Body() user:CreateUserDto): Promise<MyResponse<String> | void> {
     const result =await this.createService.execute(user);
@@ -33,6 +34,8 @@ export class UserController {
       return MyResponse.fail(400, result.message, result.error);
     }
   }
+
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @ApiTags('Users')
   @Get('/users')

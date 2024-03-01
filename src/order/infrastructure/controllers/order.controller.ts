@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateOrderDto } from '../../domain/dtos/create_order.dto';
 import { Order } from '../collections/order.schema';
 import { UpdateOrderDto } from '../../domain/dtos/update_order.dto';
@@ -11,6 +11,10 @@ import { JwtAuthGuard } from '../../../auth/jwt/jwt.auth.guard';
 import { DeleteProductRepository } from '../../../product/infrastructure/repository/delete_product.repository';
 import { DeleteOrderApplicationService } from '../../application/delete_order.application.service';
 import { AuthGuard } from '../../../auth/jwt/auth.guard';
+import { RepositoryInterface } from '../../../common/application/repository/repository.interface';
+import { OrderCriteria } from '../../domain/criteria/order.criteria';
+import { FindOrderRepository } from '../repository/find_orders.repository';
+import { FindOrderApplicationService } from '../../application/find_orders.application.service';
 
 
 @ApiTags('orders')
@@ -18,15 +22,16 @@ import { AuthGuard } from '../../../auth/jwt/auth.guard';
 export class OrdersController {
   //Repository
   private readonly createOrderRepository:CreateOrderRepository = new CreateOrderRepository();
-  private readonly updateOrderRepository:CreateOrderRepository = new CreateOrderRepository();
   private readonly deleteOrderRepository:DeleteProductRepository = new DeleteProductRepository();
-  private readonly findOrderRepository:CreateOrderRepository = new CreateOrderRepository();
+  private readonly findOrderRepository:RepositoryInterface<OrderCriteria, Order> = new FindOrderRepository();
 
   //Services
   private readonly  createOrderApplicationService:IApplicationService<CreateOrderDto, void> = new CreateOrderApplicationService(this.createOrderRepository)
   private readonly  deleteOrderApplicationService:IApplicationService<String, void> = new DeleteOrderApplicationService(this.deleteOrderRepository)
+  private readonly  FindOrderApplicationService:IApplicationService<OrderCriteria, Order> = new FindOrderApplicationService(this.findOrderRepository)
   constructor() {}
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Post('/create')
   @ApiOperation({ summary: 'Create a new order' })
@@ -41,36 +46,31 @@ export class OrdersController {
     }
     //return this.ordersService.create(createOrderDto);
   }
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
-
-  @Get('/orders')
-  @ApiOperation({ summary: 'Get all orders' })
-  @ApiResponse({ status: 200, description: 'Return all orders.', type: [Order] })
-  async findAll() {
-    //return this.ordersService.findAll();
-  }
-  @UseGuards(AuthGuard)
-
-  @Get('/order/:id')
+  @Get('/order')
   @ApiOperation({ summary: 'Get an order by id' })
-  @ApiResponse({ status: 200, description: 'Return a single order.', type: Order })
-  @ApiResponse({ status: 404, description: 'Order not found.' })
-  async findOne(@Param('id') id: string) {
-    //return this.ordersService.findOne(id);
+  @ApiResponse({ status: 200, description: 'Return a user orders.', type: Order })
+  @ApiResponse({ status: 404, description: 'User not found. this user has not orders' })
+  async findOne(@Req() req) {
+    const token = req.decodedData;
+    const orderCriteria = new OrderCriteria();
+    orderCriteria.users = token.username;
+    const result = await this.FindOrderApplicationService.execute(orderCriteria);
+    if (result.IsSuccess) {
+      return MyResponse.success(result.Value);
+    }else
+    {
+      return MyResponse.fail(result.statusCode || 500, result.message, result.error);
+    }
   }
-  @UseGuards(AuthGuard)
 
-  @Put('/update/:id')
-  @ApiOperation({ summary: 'Update an order' })
-  @ApiResponse({ status: 200, description: 'The order has been successfully updated.', type: Order })
-  async update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    //return this.ordersService.update(id, updateOrderDto);
-  }
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
-
   @Delete('/delete/:id')
   @ApiOperation({ summary: 'Delete an order' })
   @ApiResponse({ status: 204, description: 'The order has been successfully deleted.' })
+  @ApiResponse({ status: 404, description: 'Order Not Found' })
   async remove(@Param('id') id: string) {
     const result = await this.deleteOrderApplicationService.execute(id);
     if (result.IsSuccess) {
